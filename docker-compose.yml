@@ -1,0 +1,33 @@
+volumes:
+  data:
+services:
+  redis:
+    image: redis:latest
+    volumes:
+      - data:/data
+    ports:
+      - 6379:6379
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=pwd123456
+    ports:
+      - 3306:3306
+    volumes:
+      - data:/data/gin-gorm-admin
+    # 执行时间设定为20秒，超时时常设定为30秒，重试次数为10次，如果能ping通，说明数据库启动完成
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 20s
+      timeout: 30s
+      retries: 10
+  myapp:
+    image: gin-gorm-admin
+    ports:
+      - 8000:8000
+    volumes:
+      - data:/data
+    depends_on:
+      mysql:
+        # 在mysql容器状态为健康前不会启动，需要注意的是：ondition: service_healthy，在V3版本的Compose中已废弃  
+        condition: service_healthy

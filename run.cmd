@@ -1,0 +1,1 @@
+air -c .air.toml

@@ -1,0 +1,546 @@
+basePath: /api/v1
+definitions:
+  ginx.ResponseData:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  ginx.ResponseFail:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  monitor.Cpu:
+    properties:
+      cores:
+        type: integer
+      cpus:
+        items:
+          type: number
+        type: array
+    type: object
+  monitor.Disk:
+    properties:
+      totalGb:
+        type: integer
+      totalMb:
+        type: integer
+      usedGb:
+        type: integer
+      usedMb:
+        type: integer
+      usedPercent:
+        type: integer
+    type: object
+  monitor.Os:
+    properties:
+      compiler:
+        type: string
+      goVersion:
+        type: string
+      goos:
+        type: string
+      numCpu:
+        type: integer
+      numGoroutine:
+        type: integer
+    type: object
+  monitor.Rrm:
+    properties:
+      totalMb:
+        type: integer
+      usedMb:
+        type: integer
+      usedPercent:
+        type: integer
+    type: object
+  monitor.Server:
+    properties:
+      cpu:
+        $ref: '#/definitions/monitor.Cpu'
+      disk:
+        $ref: '#/definitions/monitor.Disk'
+      os:
+        $ref: '#/definitions/monitor.Os'
+      ram:
+        $ref: '#/definitions/monitor.Rrm'
+    type: object
+  schema.Notice:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      endTime:
+        type: string
+      id:
+        type: integer
+      operator:
+        type: string
+      startTime:
+        type: string
+      title:
+        type: string
+    type: object
+  schema.NoticeCreateReq:
+    properties:
+      content:
+        minLength: 2
+        type: string
+      endTime:
+        type: string
+      operator:
+        maxLength: 150
+        minLength: 2
+        type: string
+      startTime:
+        type: string
+      title:
+        maxLength: 150
+        minLength: 2
+        type: string
+    required:
+    - content
+    - endTime
+    - operator
+    - startTime
+    - title
+    type: object
+  schema.NoticeGetPageResp:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/schema.Notice'
+        type: array
+      total:
+        type: integer
+    type: object
+  schema.NoticeUpdateReq:
+    properties:
+      content:
+        minLength: 2
+        type: string
+      endTime:
+        type: string
+      id:
+        type: integer
+      operator:
+        maxLength: 150
+        minLength: 2
+        type: string
+      startTime:
+        type: string
+      title:
+        maxLength: 150
+        minLength: 2
+        type: string
+    required:
+    - content
+    - endTime
+    - id
+    - operator
+    - startTime
+    - title
+    type: object
+  schema.User:
+    properties:
+      avatar:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      state:
+        type: string
+      updatedAt:
+        type: string
+      user_type:
+        type: string
+      username:
+        type: string
+    type: object
+  schema.UserCreateReq:
+    properties:
+      avatar:
+        type: string
+      password:
+        maxLength: 12
+        minLength: 6
+        type: string
+      user_type:
+        type: integer
+      username:
+        type: string
+    required:
+    - password
+    - user_type
+    - username
+    type: object
+  schema.UserGetPageReqResult:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/schema.User'
+        type: array
+      total:
+        type: integer
+    type: object
+  schema.UserInfo:
+    properties:
+      avatar:
+        type: string
+      introduction:
+        type: string
+      name:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  schema.UserUpdateReq:
+    properties:
+      avatar:
+        type: string
+      id:
+        type: integer
+      password:
+        maxLength: 12
+        type: string
+      user_type:
+        type: integer
+      username:
+        type: string
+    required:
+    - id
+    - user_type
+    - username
+    type: object
+host: 127.0.0.1:8000
+info:
+  contact:
+    email: conjurer888888@gmail.com
+    name: conjurer
+    url: https:/github.com/dot123
+  description: This is a game management background. you can use the api key `ApiKeyAuth`
+    to test the authorization filters.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://github.com
+  title: gin-gorm-admin API
+  version: "1.0"
+paths:
+  /monitor/index:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            allOf:
+            - $ref: '#/definitions/ginx.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/monitor.Server'
+              type: object
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取服务器状态
+      tags:
+      - 服务器状态
+  /msg/notice:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        maximum: 100
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            allOf:
+            - $ref: '#/definitions/ginx.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.NoticeGetPageResp'
+              type: object
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取公告列表
+      tags:
+      - 公告管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/schema.NoticeCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 新建公告
+      tags:
+      - 公告管理
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/schema.NoticeUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新公告
+      tags:
+      - 公告管理
+  /msg/notice/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 公告id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除公告
+      tags:
+      - 公告管理
+  /public/uploadFile:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      summary: 上传文件
+      tags:
+      - 文件管理
+  /user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/schema.UserCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 新建用户
+      tags:
+      - UserApi
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/schema.UserUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改用户
+      tags:
+      - UserApi
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseData'
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除用户
+      tags:
+      - UserApi
+  /user/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            allOf:
+            - $ref: '#/definitions/ginx.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.UserInfo'
+              type: object
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
+      tags:
+      - UserApi
+  /user/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        maximum: 100
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功结果
+          schema:
+            allOf:
+            - $ref: '#/definitions/ginx.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.UserGetPageReqResult'
+              type: object
+        "500":
+          description: 失败结果
+          schema:
+            $ref: '#/definitions/ginx.ResponseFail'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户列表
+      tags:
+      - UserApi
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
