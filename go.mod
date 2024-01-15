@@ -3,7 +3,6 @@ module github.com/dot123/gin-gorm-admin
 go 1.18
 
 require (
-	github.com/LyricTian/queue v1.3.0
 	github.com/appleboy/gin-jwt/v2 v2.8.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/gzip v0.0.6

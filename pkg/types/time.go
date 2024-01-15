@@ -34,7 +34,7 @@ func (t Time) String() string {
 	return time.Time(t).Format(timeFormat)
 }
 
-func (t Time) local() time.Time {
+func (t Time) Local() time.Time {
 	loc, _ := time.LoadLocation(zone)
 	return time.Time(t).In(loc)
 }
