@@ -41,11 +41,11 @@ func RateLimiterMiddleware(skippers ...SkipperFunc) gin.HandlerFunc {
 		userID := contextx.FromUserID(c.Request.Context())
 		if userID != 0 {
 			limit := cfg.Count
-			rate, delay, allowed := limiter.AllowMinute(fmt.Sprintf("%d", userID), limit)
+			count, delay, allowed := limiter.AllowMinute(fmt.Sprintf("%d", userID), limit)
 			if !allowed {
 				h := c.Writer.Header()
 				h.Set("X-RateLimit-Limit", strconv.FormatInt(limit, 10))
-				h.Set("X-RateLimit-Remaining", strconv.FormatInt(limit-rate, 10))
+				h.Set("X-RateLimit-Remaining", strconv.FormatInt(limit-count, 10))
 				delaySec := int64(delay / time.Second)
 				h.Set("X-RateLimit-Delay", strconv.FormatInt(delaySec, 10))
 				ginx.ResError(c, errors.ErrTooManyRequests)
