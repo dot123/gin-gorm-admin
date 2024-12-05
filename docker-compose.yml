@@ -31,3 +31,4 @@ services:
       mysql:
         # 在mysql容器状态为健康前不会启动，需要注意的是：ondition: service_healthy，在V3版本的Compose中已废弃  
         condition: service_healthy
+    restart: always

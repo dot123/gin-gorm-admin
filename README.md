@@ -41,7 +41,6 @@
     ├─fileStore
     ├─gormx
     ├─hash
-    ├─helper
     ├─logger
     ├─monitor
     ├─rabbitMQ
@@ -49,6 +48,7 @@
     ├─store
     ├─timer
     ├─types
+    ├─utils
     └─validate
 </code></pre>
 
