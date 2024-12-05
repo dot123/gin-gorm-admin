@@ -52,14 +52,14 @@ func New(c *Config) (*gorm.DB, error) {
 		dialector = sqlite.Open(c.DSN)
 	}
 
-	gconfig := &gorm.Config{
+	config := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   c.TablePrefix,
 			SingularTable: true,
 		},
 	}
 
-	db, err := gorm.Open(dialector, gconfig)
+	db, err := gorm.Open(dialector, config)
 	if err != nil {
 		return nil, err
 	}

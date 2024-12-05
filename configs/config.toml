@@ -52,7 +52,7 @@ ConfigDir = ""
 # redis配置信息
 [Redis]
 # 地址
-Addr = "redis:6379"
+Addr = "127.0.0.1:6379"
 # 密码
 Password = ""
 
@@ -115,7 +115,7 @@ EnableAutoMigrate = true
 
 [MySQL]
 # 连接地址
-Host = "mysql"
+Host = "127.0.0.1"
 # 连接端口
 Port = 3306
 # 用户名

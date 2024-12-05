@@ -15,7 +15,7 @@ var (
 	once sync.Once
 )
 
-// Load config file (toml/json/yaml)
+// MustLoad Load config file (toml/json/yaml)
 func MustLoad(fpaths ...string) {
 	once.Do(func() {
 		loaders := []multiconfig.Loader{

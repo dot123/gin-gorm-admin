@@ -143,11 +143,9 @@ func ResError(c *gin.Context, err error, status ...int) {
 	var res *errors.ResponseError
 
 	if err != nil {
-		if e, ok := err.(*errors.ResponseError); ok {
+		var e *errors.ResponseError
+		if errors.As(err, &e) {
 			res = e
-		} else {
-			res = errors.UnWrapResponse(errors.ErrInternalServer)
-			res.ERR = err
 		}
 	} else {
 		res = errors.UnWrapResponse(errors.ErrInternalServer)

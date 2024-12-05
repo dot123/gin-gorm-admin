@@ -9,8 +9,8 @@ import (
 	"github.com/dot123/gin-gorm-admin/internal/models/user"
 	"github.com/dot123/gin-gorm-admin/internal/schema"
 	"github.com/dot123/gin-gorm-admin/internal/service"
-	"github.com/dot123/gin-gorm-admin/pkg/helper"
 	"github.com/dot123/gin-gorm-admin/pkg/logger"
+	"github.com/dot123/gin-gorm-admin/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"log"
@@ -58,7 +58,7 @@ func (j *JWT) GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (authMiddlewar
 				return jwt.MapClaims{
 					"userName":  v.UserName,
 					"userID":    v.UserID,
-					"userRoles": helper.B2S(jsonRole),
+					"userRoles": utils.B2S(jsonRole),
 				}
 			}
 			return jwt.MapClaims{}
@@ -67,7 +67,7 @@ func (j *JWT) GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (authMiddlewar
 			roles := jwt.ExtractClaims(c)
 			jsonRole := roles["userRoles"].(string)
 			userRoles := make([]*schema.Role, 0)
-			json.Unmarshal(helper.S2B(jsonRole), &userRoles)
+			json.Unmarshal(utils.S2B(jsonRole), &userRoles)
 
 			userName := roles["userName"].(string)
 			userID := uint64(roles["userID"].(float64))

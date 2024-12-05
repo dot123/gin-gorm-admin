@@ -6,8 +6,8 @@ import (
 	"github.com/dot123/gin-gorm-admin/internal/models/role"
 	"github.com/dot123/gin-gorm-admin/internal/schema"
 	"github.com/dot123/gin-gorm-admin/pkg/logger"
+	"github.com/dot123/gin-gorm-admin/pkg/utils"
 	"github.com/google/wire"
-	"github.com/jinzhu/copier"
 )
 
 var RoleSet = wire.NewSet(wire.Struct(new(RoleSrv), "*"))
@@ -24,7 +24,7 @@ func (s *RoleSrv) GetUserRoles(ctx context.Context, userName string) (*[]*schema
 	}
 
 	result := make([]*schema.Role, 0)
-	copier.Copy(&result, roles)
+	utils.Copy(&result, roles)
 
 	return &result, nil
 }

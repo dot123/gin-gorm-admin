@@ -8,6 +8,7 @@ import (
 var (
 	Is           = errors.Is
 	New          = errors.New
+	As           = errors.As
 	Wrap         = errors.Wrap
 	Wrapf        = errors.Wrapf
 	WithStack    = errors.WithStack

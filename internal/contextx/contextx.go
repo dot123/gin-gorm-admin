@@ -13,7 +13,7 @@ type (
 	traceIDCtx   struct{}
 )
 
-// Wrap transaction context
+// NewTrans Wrap transaction context
 func NewTrans(ctx context.Context, trans interface{}) context.Context {
 	return context.WithValue(ctx, transCtx{}, trans)
 }

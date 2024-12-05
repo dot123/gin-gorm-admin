@@ -9,8 +9,8 @@ import (
 	"github.com/dot123/gin-gorm-admin/internal/schema"
 	"github.com/dot123/gin-gorm-admin/pkg/logger"
 	"github.com/dot123/gin-gorm-admin/pkg/redisHelper"
+	"github.com/dot123/gin-gorm-admin/pkg/utils"
 	"github.com/go-redis/redis"
-	"github.com/jinzhu/copier"
 	"golang.org/x/sync/singleflight"
 	"time"
 )
@@ -49,7 +49,7 @@ func (s *MsgSrv) GetPage(ctx context.Context, params *schema.NoticeGetPageReq) (
 		// 尝试从缓存中取
 		err := redisHelper.Get(s.Ring, key, data)
 		if err != nil {
-			if redis.Nil != err {
+			if !errors.Is(err, redis.Nil) {
 				return nil, err
 			}
 		} else {
@@ -63,7 +63,7 @@ func (s *MsgSrv) GetPage(ctx context.Context, params *schema.NoticeGetPageReq) (
 			return nil, err
 		}
 
-		copier.Copy(&data.List, result)
+		utils.Copy(&data.List, result)
 		data.Total = total
 
 		// 再放入缓存
@@ -84,7 +84,7 @@ func (s *MsgSrv) GetPage(ctx context.Context, params *schema.NoticeGetPageReq) (
 // Create 新建公告
 func (s *MsgSrv) Create(ctx context.Context, params *schema.NoticeCreateReq) error {
 	model := new(msg.Notice)
-	copier.Copy(model, params)
+	utils.Copy(model, params)
 
 	err := s.MsgRepo.Create(ctx, model)
 	redisHelper.LikeDeletes(s.Ring, NoticesKey)
@@ -102,7 +102,7 @@ func (s *MsgSrv) Update(ctx context.Context, params *schema.NoticeUpdateReq) err
 		return err
 	}
 
-	copier.Copy(model, params)
+	utils.Copy(model, params)
 
 	err = s.MsgRepo.Update(ctx, model)
 	redisHelper.LikeDeletes(s.Ring, NoticesKey)
